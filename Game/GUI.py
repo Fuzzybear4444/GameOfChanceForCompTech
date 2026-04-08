@@ -3,7 +3,10 @@ import sys
 import pygame
 
 class Button:
-
+    """
+    Syntax: 
+    Button(x, y, width, height, color, hover_color, text, textSize, text_color)
+    """
     def __init__(self,  x, y, width, height, color, hover_color, text, textSize, text_color=(255, 255, 255)):
         self.text = text
         self.rect = pygame.Rect(x, y, width, height)
@@ -34,7 +37,10 @@ class Button:
                 return True
         return False
 class ExitButton(Button):
-
+    """
+    Syntax: 
+    Button(x, y, width, height, color, hover_color, text, textSize, text_color)
+    """
     def __init__(self,  x, y, width, height, color, hover_color, text, textSize, text_color=(255, 255, 255)):
         super().__init__(x, y, width, height, color, hover_color, text, textSize, text_color)
         self.hover_color = hover_color
