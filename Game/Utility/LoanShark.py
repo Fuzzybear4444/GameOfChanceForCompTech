@@ -1,19 +1,7 @@
-class EconomyManager:
-    def __init__(self, starting_balance):
-        self.balance = starting_balance
-        self.kneeCaps = 2
+class loanShark:
+    def __init__(self):
+        self.kneeCaps = 2  # Each player starts with 2 knee caps
 
-    def add_funds(self, amount):
-        self.balance += amount
-
-    def spend_funds(self, amount):
-        if self.balance >= amount:
-            self.balance -= amount
-            return True  # Purchase successful
-        return False     # Not enough money
-    def get_balance(self):
-        return self.balance
-    
     def KneeCapDestruction(self):
         if self.kneeCaps > 1:
             self.kneeCaps -= 1  # Knee cap destroyed
