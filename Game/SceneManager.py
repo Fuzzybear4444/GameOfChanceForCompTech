@@ -5,7 +5,7 @@ import os
 import Utility.Constants as Constants
 from Utility.Colors import *
 from Utility.GUI import Button
-
+from Utility.EconManager import economy
 # 1. THE BASE CLASS (Everything else inherits from this)
 class Scene:
     def handle_events(self, events): return None
@@ -23,7 +23,7 @@ class HubScene(Scene):
             self.background = pygame.Surface(Constants.ScreenSize)
             self.background.fill((20, 40, 20))
         w, h = Constants.ScreenSize
-        #self.btn_casino = Button(w//2 - 150, 300, 300, 80, (60, 60, 100), (100, 100, 160), "Casino Game", 32)
+        #self.btn_casino = Button(w//2 - 150, 300, 300, 80, (60, 60, 100), (100, 100, 160), "Casino Game", 32
         self.btn_dating = Button(88, 450, 99, 30, (100, 60, 100), (160, 100, 160), "Isaac Dating Sim", 12)
 
     def handle_events(self, events):
@@ -40,8 +40,12 @@ class HubScene(Scene):
         self.btn_dating.update(m_pos)
 
     def draw(self, screen):
+        from Utility.EconManager import EconomyManager
+        
         screen.blit(self.background, (0, 0))
+        economy.draw_balance(screen)
         self.btn_dating.draw(screen)
+        
 
 # 4. THE MANAGER
 class SceneManager:
@@ -53,7 +57,6 @@ class SceneManager:
         # Delayed imports to prevent circular dependency
         from Utility.MainMenu import MenuScene
         from DatingSim.isaacDatingSim import DatingSimScene
-        
         self.scenes = {
             "MENU": MenuScene(),
             "HUB": HubScene(),
@@ -62,18 +65,26 @@ class SceneManager:
         self.active_scene = self.scenes["MENU"]
 
     def run(self):
-        while True:
-            events = pygame.event.get()
-            for event in events:
-                if event.type == pygame.QUIT:
-                    pygame.quit(); sys.exit()
+            while True:
+                events = pygame.event.get()
+                for event in events:
+                    if event.type == pygame.QUIT:
+                        pygame.quit(); sys.exit()
 
-            next_key = self.active_scene.handle_events(events)
-            if next_key == "QUIT": break
-            elif next_key and next_key in self.scenes:
-                self.active_scene = self.scenes[next_key]
+                next_key = self.active_scene.handle_events(events)
+                
+                if next_key == "QUIT": 
+                    break
+                elif next_key and next_key in self.scenes:
+                    # --- ADD THIS RESET LOGIC ---
+                    if next_key == "DATING":
+                        self.scenes["DATING"].reset_game()
+                    
+                    # Switch the scene
+                    self.active_scene = self.scenes[next_key]
+                # ----------------------------
 
-            self.active_scene.update()
-            self.active_scene.draw(self.screen)
-            pygame.display.flip()
-            self.clock.tick(Constants.FPS)
+                self.active_scene.update()
+                self.active_scene.draw(self.screen)
+                pygame.display.flip()
+                self.clock.tick(Constants.FPS)

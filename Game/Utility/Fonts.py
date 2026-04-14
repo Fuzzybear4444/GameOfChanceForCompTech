@@ -1,6 +1,6 @@
 # ── Fonts ─────────────────────────────────────────────────────────────────────
 import pygame
-
+pygame.font.init()
 
 font_large  = pygame.font.SysFont("segoeuisymbol", 32, bold=True)
 font_med    = pygame.font.SysFont("segoeuisymbol", 24)

@@ -4,9 +4,11 @@ import textwrap
 import math
 import random
 import os
+from Utility.EconManager import EconomyManager
 from Utility.Fonts import font_med, font_small, font_large
 from Utility.Colors import *
 import Utility.Constants as Constants
+from Utility.EconManager import economy
 
 class DatingSimScene:
     def __init__(self, player_name="Player"):
@@ -17,7 +19,8 @@ class DatingSimScene:
         self.in_ending = False
         self.ending_text = ""
         self.fade_alpha = 255
-        
+        self.IsMarried = False
+        self.isMarriedNumOfTimes = 0
         # 2. Text Reveal Logic
         self.reveal_index = 0
         self.reveal_timer = 0
@@ -151,9 +154,10 @@ class DatingSimScene:
                 "ending": "🥛💥 Ending: Milk Explosion"
             },
             "end_married": {
-                "text": f"You get on one knee and ask: Isaac, will you be the love of my life? Isaac replies: YES!! You get married on the spot. Turns out Isaac was secretly rich. {name} gains +1,000,000,000 💰",
+                "text": f"You get on one knee and ask: Isaac, will you be the love of my life? Isaac replies: YES!! You get married on the spot. Turns out Isaac was secretly rich. {name} gains +1,000,000 💰",
                 "choices": [],
-                "ending": "💍 Ending: RICH MARRIED ENDING"
+                "ending": "💍 Ending: RICH MARRIED ENDING",
+                "IsMarried": True
             },
             "end_jail": {
                 "text": 'You get arrested on the spot for pulling "it" out in a public establishment.',
@@ -164,6 +168,7 @@ class DatingSimScene:
                 "text": "You do a backflip in confusion... and explode.",
                 "choices": [],
                 "ending": "🤸💥 Ending: That Backflip Though"
+                
             },
             "end_nsfw": {
                 "text": "The following events cannot be shown as they violate school district guidelines.",
@@ -205,7 +210,7 @@ class DatingSimScene:
                     self.current_text = self.full_text
                 elif self.in_ending:
                     self.in_ending = False
-                    self.enter_state("start")
+                    return "HUB"
                 elif text_done and choices:
                     for rect, key in self.buttons:
                         if rect.collidepoint(event.pos):
@@ -253,6 +258,12 @@ class DatingSimScene:
             if self.ending_delay >= 2.5:
                 self.in_ending = True
                 self.ending_text = node["ending"]
+                if node.get("IsMarried"):
+                    self.IsMarried = True
+                    self.isMarriedNumOfTimes += 1
+        if self.IsMarried and self.isMarriedNumOfTimes == 1:
+            self.isMarriedNumOfTimes += 1
+            economy.add_funds(1000000)
 
     def draw(self, screen):
         if self.in_ending:
@@ -336,3 +347,18 @@ class DatingSimScene:
             txt = font_small.render(f"[{letter}] {label}", True, (255, 255, 255))
             screen.blit(txt, (rect.x + 20, rect.y + (btn_h - txt.get_height()) // 2))
             self.buttons.append((rect, key))
+            
+    def getMarriedNum(self):
+        return self.isMarriedNumOfTimes
+
+    def reset_game(self):
+        """Resets the dating sim to its original state."""
+        self.state = "start"
+        self.in_ending = False
+        self.ending_text = ""
+        self.fade_alpha = 255
+        self.reveal_index = 0
+        self.reveal_timer = 0
+        self.current_text = ""
+        self.full_text = self.story["start"]["text"]
+        self.ending_delay = 0.0

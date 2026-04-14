@@ -1,3 +1,6 @@
+import pygame
+from Utility import Constants
+from Utility.Fonts import font_med, font_small, font_large
 class EconomyManager:
     def __init__(self, starting_balance):
         self.balance = starting_balance
@@ -17,3 +20,9 @@ class EconomyManager:
     def get_balance(self):
         return self.balance
     
+    def draw_balance(self, screen):
+        balance_text = f"Balance: ${self.balance}"
+        balance_surf = font_med.render(balance_text, True, (255, 255, 255))
+        screen.blit(balance_surf, (Constants.ScreenSize[0] - balance_surf.get_width() - 20, 20))
+
+economy = EconomyManager(100)
