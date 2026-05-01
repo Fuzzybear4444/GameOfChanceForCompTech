@@ -1,3 +1,4 @@
 import pygame
-ScreenSize = WIDTH, HEIGHT = 1000, 1000
+Screen_Size = WIDTH, HEIGHT = 1000, 1000
 FPS = 60
+CLOCK = pygame.time.Clock()

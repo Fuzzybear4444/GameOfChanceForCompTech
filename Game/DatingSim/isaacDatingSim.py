@@ -40,7 +40,7 @@ class DatingSimScene:
 
         # 4. Image Loading
         self.isaac_image = self.load_asset("isaac.png", (340, 500))
-        self.bg_image = self.load_asset("background.png", Constants.ScreenSize)
+        self.bg_image = self.load_asset("background.png", Constants.Screen_Size)
 
         self.buttons = [] 
         
@@ -271,7 +271,7 @@ class DatingSimScene:
             lines = textwrap.wrap(self.ending_text, width=30)
             for i, line in enumerate(lines):
                 end_surf = font_large.render(line, True, (255, 215, 0))
-                screen.blit(end_surf, (Constants.ScreenSize[0]//2 - end_surf.get_width()//2, 400 + i*50))
+                screen.blit(end_surf, (Constants.Screen_Size[0]//2 - end_surf.get_width()//2, 400 + i*50))
             return
 
         # Background
@@ -285,7 +285,7 @@ class DatingSimScene:
         self.draw_isaac(screen, bounce, highlight)
             
         # Dialogue Box
-        box_rect = pygame.Rect(20, 700, Constants.ScreenSize[0] - 40, 160)
+        box_rect = pygame.Rect(20, 700, Constants.Screen_Size[0] - 40, 160)
         pygame.draw.rect(screen, (15, 10, 35, 210), box_rect, border_radius=12)
         pygame.draw.rect(screen, (180, 180, 255), box_rect, 2, border_radius=12)
         
@@ -306,7 +306,7 @@ class DatingSimScene:
 
         # Fade Overlay
         if self.fade_alpha > 0:
-            fade_surf = pygame.Surface(Constants.ScreenSize)
+            fade_surf = pygame.Surface(Constants.Screen_Size)
             fade_surf.set_alpha(self.fade_alpha)
             fade_surf.fill((0,0,0))
             screen.blit(fade_surf, (0,0))
@@ -338,7 +338,7 @@ class DatingSimScene:
         start_y = 690 - total_h
         
         for i, (label, key) in enumerate(choices):
-            rect = pygame.Rect(60, start_y + i * (btn_h + btn_gap), Constants.ScreenSize[0] - 120, btn_h)
+            rect = pygame.Rect(60, start_y + i * (btn_h + btn_gap), Constants.Screen_Size[0] - 120, btn_h)
             color = (100, 100, 160) if rect.collidepoint(m_pos) else (60, 60, 100)
             pygame.draw.rect(screen, color, rect, border_radius=10)
             pygame.draw.rect(screen, (180, 180, 255), rect, 2, border_radius=10)
@@ -362,3 +362,6 @@ class DatingSimScene:
         self.current_text = ""
         self.full_text = self.story["start"]["text"]
         self.ending_delay = 0.0
+    
+    def on_enter(self):
+        self.reset_game()

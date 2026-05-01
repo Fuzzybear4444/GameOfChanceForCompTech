@@ -23,6 +23,6 @@ class EconomyManager:
     def draw_balance(self, screen):
         balance_text = f"Balance: ${self.balance}"
         balance_surf = font_med.render(balance_text, True, (255, 255, 255))
-        screen.blit(balance_surf, (Constants.ScreenSize[0] - balance_surf.get_width() - 20, 20))
+        screen.blit(balance_surf, (Constants.Screen_Size[0] - balance_surf.get_width() - 20, 20))
 
 economy = EconomyManager(100)
