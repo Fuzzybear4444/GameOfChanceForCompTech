@@ -1019,18 +1019,42 @@ def run_explosion_roulette(screen, clock,
 # ─────────────────────────────────────────────
 #  STANDALONE ENTRY POINT
 # ─────────────────────────────────────────────
-if __name__ == "__main__":
-    pygame.init()
-    screen = pygame.display.set_mode((WIDTH, HEIGHT))
-    pygame.display.set_caption("💣 Explosion Roulette — High Stakes Edition")
-    clock  = pygame.time.Clock()
 
-    # Pass num_bullets=0 to show the bullet-selector setup screen
-    result = run_explosion_roulette(screen, clock,
-                                    starting_cash=STARTING_CASH,
-                                    num_bullets=0)
-    print(f"\n[Explosion Roulette]  outcome={result['outcome']}  "
-          f"cash=${result['cash']:,}")
+import pygame
+# Ensure you have your economy manager imported if you want to save money
+# from Utility.EconManager import economy 
 
-    pygame.quit()
-    sys.exit()
+class RussianRouletteScene:
+    def __init__(self):
+        # The scene itself doesn't need much state since the 
+        # minigame function handles the internal loop.
+        pass
+
+    def handle_events(self, events):
+        # This can remain empty if the minigame handles its own events
+        pass
+
+    def update(self):
+        pass
+
+    def draw(self, screen):
+        pass
+
+    def on_enter(self, screen, clock):
+        """
+        This is called by your SceneManager when switching to this scene.
+        It launches the high-stakes minigame loop.
+        """
+        # 1. Define starting cash (either from a global economy or constant)
+        starting_cash = 500 
+
+        # 2. Run the upgraded minigame function provided in [source 20]
+        # This function contains its own 'while True' loop and handles its own drawing.
+        results = run_explosion_roulette(screen, clock, starting_cash=starting_cash)
+
+        # 3. After the player exits the minigame, the function returns the results.
+        # results = {"outcome": "survived"|"exploded"|"cashed_out", "cash": int}
+        final_cash = results["cash"]
+        
+        # 4. Logic to return to the HUB after the game finishes
+        return "HUB"
