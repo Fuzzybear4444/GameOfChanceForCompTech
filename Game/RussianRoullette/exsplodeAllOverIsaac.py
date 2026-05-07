@@ -23,7 +23,8 @@ import pygame
 import random
 import math
 import sys
-
+from Utility.EconManager import economy
+from Utility.GUI import Button
 # ─────────────────────────────────────────────
 #  CONSTANTS
 # ─────────────────────────────────────────────
@@ -509,9 +510,7 @@ def draw_setup_screen(surface, num_bullets, frame,
 #  MAIN MINIGAME FUNCTION
 # ─────────────────────────────────────────────
 
-def run_explosion_roulette(screen, clock,
-                           starting_cash: int = STARTING_CASH,
-                           num_bullets: int = DEFAULT_BULLETS) -> dict:
+def run_explosion_roulette(screen, clock, starting_cash: int = STARTING_CASH, num_bullets: int = DEFAULT_BULLETS) -> dict:
     """
     Run the Explosion Roulette gambling minigame.
 
@@ -526,6 +525,7 @@ def run_explosion_roulette(screen, clock,
             "outcome" : "survived" | "exploded" | "cashed_out"
             "cash"    : int — player's cash after the minigame
     """
+    btn_exit = Button(20, 20, 100, 40, DARK_RED, NEON_RED, "EXIT", 20)
     pygame.font.init()
 
     try:
@@ -546,7 +546,8 @@ def run_explosion_roulette(screen, clock,
     char_pos     = (cx + 230, cy - 20)
     lever_rect   = pygame.Rect(cx - 160, HEIGHT - 80, 270, 52)
     cashout_rect = pygame.Rect(cx + 120, HEIGHT - 80, 190, 52)
-
+    exit_button = Button(cx - 170, HEIGHT // 2 + 164, 340, 46, DARK_RED, NEON_RED, "EXIT", 20)
+    again_button = Button(cx - 170, HEIGHT // 2 + 100, 340, 54, NEON_GREEN, DARK_GREEN, "PLAY AGAIN", 20)
     # Bet panel (left)
     bet_panel    = pygame.Rect(12,  85, 235, 580)
     # Info panel (right)
@@ -623,13 +624,15 @@ def run_explosion_roulette(screen, clock,
         clock.tick(60)
         frame += 1
         mouse  = pygame.mouse.get_pos()
-
+        exit_button.update(mouse)
+        again_button.update(mouse)
         # ── Events ──
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
+            if exit_button.handle_event(event):
+                return {"outcome": "exit", "cash": cash}
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return {"outcome": "cashed_out", "cash": cash}
@@ -971,12 +974,22 @@ def run_explosion_roulette(screen, clock,
 
             again_r = pygame.Rect(cx - 170, HEIGHT // 2 + 100, 340, 54)
             leave_r = pygame.Rect(cx - 170, HEIGHT // 2 + 164, 340, 46)
-            draw_button(screen, again_r, "PLAY AGAIN  [R]",
-                        font_medium, again_r.collidepoint(mouse),
-                        NEON_GREEN, DARK_GREEN)
-            draw_button(screen, leave_r, "LEAVE TABLE  [ESC]",
-                        font_medium, leave_r.collidepoint(mouse),
-                        NEON_RED, DARK_RED)
+            
+            
+          
+            # draw_button(screen, again_r, "PLAY AGAIN  [R]",
+            #             font_medium, again_r.collidepoint(mouse),
+            #             NEON_GREEN, DARK_GREEN)
+            
+            again_button.draw(screen)
+            again_button.handle_event(event)
+            
+            
+            # draw_button(screen, leave_r, "LEAVE TABLE  [ESC]",
+            #             font_medium, leave_r.collidepoint(mouse),
+            #             NEON_RED, DARK_RED)
+           
+            exit_button.draw(screen)
 
         # ── GAME OVER overlay ──
         if state == GS.GAMEOVER:
@@ -1000,18 +1013,15 @@ def run_explosion_roulette(screen, clock,
             leave_r = pygame.Rect(cx - 170, HEIGHT // 2 + 174, 340, 46)
 
             if cash >= MIN_BET:
-                draw_button(screen, again_r, "PLAY AGAIN  [R]",
-                            font_medium, again_r.collidepoint(mouse),
-                            NEON_GREEN, DARK_GREEN)
-                draw_button(screen, leave_r, "LEAVE TABLE  [ESC]",
-                            font_medium, leave_r.collidepoint(mouse),
-                            NEON_RED, DARK_RED)
+                again_button.draw(screen)
+                again_button.handle_event(event)
+                
+                exit_button.draw(screen)
             else:
                 draw_neon_text(screen, "COMPLETELY BUSTED.  Yikes.",
                                font_medium, NEON_RED, (cx, HEIGHT // 2 + 126))
-                draw_button(screen, leave_r, "WALK OF SHAME  [ESC]",
-                            font_medium, leave_r.collidepoint(mouse),
-                            NEON_RED, DARK_RED)
+               
+                exit_button.draw(screen)
 
         pygame.display.flip()
 
@@ -1025,36 +1035,20 @@ import pygame
 # from Utility.EconManager import economy 
 
 class RussianRouletteScene:
-    def __init__(self):
-        # The scene itself doesn't need much state since the 
-        # minigame function handles the internal loop.
-        pass
+    def __init__(self, screen, clock):
+        """Establish screen and clock in init as requested."""
+        self.screen = screen
+        self.clock = clock
 
-    def handle_events(self, events):
-        # This can remain empty if the minigame handles its own events
-        pass
+    def handle_events(self, events): pass
+    def update(self): pass
+    def draw(self, screen): pass
 
-    def update(self):
-        pass
-
-    def draw(self, screen):
-        pass
-
-    def on_enter(self, screen, clock):
-        """
-        This is called by your SceneManager when switching to this scene.
-        It launches the high-stakes minigame loop.
-        """
-        # 1. Define starting cash (either from a global economy or constant)
-        starting_cash = 500 
-
-        # 2. Run the upgraded minigame function provided in [source 20]
-        # This function contains its own 'while True' loop and handles its own drawing.
-        results = run_explosion_roulette(screen, clock, starting_cash=starting_cash)
-
-        # 3. After the player exits the minigame, the function returns the results.
-        # results = {"outcome": "survived"|"exploded"|"cashed_out", "cash": int}
-        final_cash = results["cash"]
+    def on_enter(self):
+        """Launches the minigame using the established screen and clock."""
+        starting_cash = economy.get_balance()
+        results = run_explosion_roulette(self.screen, self.clock, starting_cash=starting_cash)
         
-        # 4. Logic to return to the HUB after the game finishes
+        if results and "cash" in results:
+            economy.balance = results["cash"]
         return "HUB"

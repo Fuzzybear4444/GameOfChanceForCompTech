@@ -3,7 +3,7 @@ import Utility.Constants as Constants
 from SceneManager import SceneManager, HubScene
 from DatingSim import isaacDatingSim
 from RussianRoullette.exsplodeAllOverIsaac import RussianRouletteScene
-
+from blackjack.blackjack_game import BlackjackScene
 if __name__ == "__main__":
     # 1. Initialize all imported pygame modules
     pygame.init()
@@ -21,7 +21,8 @@ if __name__ == "__main__":
     # 5. Register and start your scenes
     game.add_scene("HUB", HubScene())
     game.add_scene("DATING", isaacDatingSim.DatingSimScene(player_name="Player"))
-    game.add_scene("RUSSIANROULETTE", RussianRouletteScene())
+    game.add_scene("RUSSIANROULETTE", RussianRouletteScene(screen, clock))
+    game.add_scene("BLACKJACK", BlackjackScene(screen))
     game.switch_scene("HUB")
     
     # 6. Start the game loop

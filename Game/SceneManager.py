@@ -23,21 +23,26 @@ class HubScene(Scene):
             self.background = pygame.Surface(Constants.Screen_Size)
             self.background.fill((20, 40, 20))
         w, h = Constants.Screen_Size
-        #self.btn_casino = Button(w//2 - 150, 300, 300, 80, (60, 60, 100), (100, 100, 160), "Casino Game", 32
+        self.btn_blackjack = Button(605, 500, 105, 30, (60, 60, 100), (100, 100, 160), "Blackjack", 20)
         self.btn_dating = Button(88, 450, 99, 30, (100, 60, 100), (160, 100, 160), "Isaac Dating Sim", 12)
+        self.btn_russian_roulette = Button(88, 700, 99, 30, (100, 60, 100), (160, 100, 160), "RUSSIANROULETTE", 12)
 
     def handle_events(self, events):
         for event in events:
            # if self.btn_casino.handle_event(event): return "CASINO"
             if self.btn_dating.handle_event(event): return "DATING"
+            if self.btn_blackjack.handle_event(event): return "BLACKJACK"
+            if self.btn_russian_roulette.handle_event(event): return "RUSSIANROULETTE"
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                return "MENU"
+                return "HUB"
         return None
 
     def update(self):
         m_pos = pygame.mouse.get_pos()
         #self.btn_casino.update(m_pos)
         self.btn_dating.update(m_pos)
+        self.btn_blackjack.update(m_pos)
+        self.btn_russian_roulette.update(m_pos)
 
     def draw(self, screen):
         from Utility.EconManager import EconomyManager
@@ -45,6 +50,8 @@ class HubScene(Scene):
         screen.blit(self.background, (0, 0))
         economy.draw_balance(screen)
         self.btn_dating.draw(screen)
+        self.btn_blackjack.draw(screen)
+        self.btn_russian_roulette.draw(screen)
 
 
 class SceneManager:

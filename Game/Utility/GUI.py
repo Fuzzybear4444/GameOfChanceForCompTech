@@ -55,3 +55,4 @@ class ExitButton(Button):
                 pygame.quit()
                 sys.exit()
         return False
+
