@@ -525,7 +525,6 @@ def run_explosion_roulette(screen, clock, starting_cash: int = STARTING_CASH, nu
             "outcome" : "survived" | "exploded" | "cashed_out"
             "cash"    : int — player's cash after the minigame
     """
-    btn_exit = Button(20, 20, 100, 40, DARK_RED, NEON_RED, "EXIT", 20)
     pygame.font.init()
 
     try:
@@ -624,6 +623,7 @@ def run_explosion_roulette(screen, clock, starting_cash: int = STARTING_CASH, nu
         clock.tick(60)
         frame += 1
         mouse  = pygame.mouse.get_pos()
+        
         exit_button.update(mouse)
         again_button.update(mouse)
         # ── Events ──
@@ -631,8 +631,11 @@ def run_explosion_roulette(screen, clock, starting_cash: int = STARTING_CASH, nu
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+                
             if exit_button.handle_event(event):
-                return {"outcome": "exit", "cash": cash}
+                if state == GS.SETUP or state == GS.GAMEOVER or state == GS.CASHOUT:
+                    return {"outcome": "EXIT", "cash": cash}
+                else: pass
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     return {"outcome": "cashed_out", "cash": cash}
@@ -1026,21 +1029,17 @@ def run_explosion_roulette(screen, clock, starting_cash: int = STARTING_CASH, nu
         pygame.display.flip()
 
 
-# ─────────────────────────────────────────────
-#  STANDALONE ENTRY POINT
-# ─────────────────────────────────────────────
-
-import pygame
-# Ensure you have your economy manager imported if you want to save money
-# from Utility.EconManager import economy 
-
 class RussianRouletteScene:
     def __init__(self, screen, clock):
         """Establish screen and clock in init as requested."""
         self.screen = screen
         self.clock = clock
 
-    def handle_events(self, events): pass
+    def handle_events(self, events): 
+        if(self.on_enter == "HUB"):
+            print("hub")
+            return "HUB"
+        return "HUB"
     def update(self): pass
     def draw(self, screen): pass
 

@@ -25,7 +25,9 @@ class HubScene(Scene):
         w, h = Constants.Screen_Size
         self.btn_blackjack = Button(605, 500, 105, 30, (60, 60, 100), (100, 100, 160), "Blackjack", 20)
         self.btn_dating = Button(88, 450, 99, 30, (100, 60, 100), (160, 100, 160), "Isaac Dating Sim", 12)
-        self.btn_russian_roulette = Button(88, 700, 99, 30, (100, 60, 100), (160, 100, 160), "RUSSIANROULETTE", 12)
+        self.btn_russian_roulette = Button(870, 490, 110, 30, (100, 60, 100), (160, 100, 160), "RUSSIAN ROULETTE", 10)
+        self.btn_slots = Button(100, 490, 70, 20, (60, 100, 60), (100, 160, 100), "Slots", 20)
+        self.btn_roulette = Button(605, 465, 105, 30, (100, 60, 60), (160, 100, 100), "Roulette", 20)
 
     def handle_events(self, events):
         for event in events:
@@ -33,6 +35,8 @@ class HubScene(Scene):
             if self.btn_dating.handle_event(event): return "DATING"
             if self.btn_blackjack.handle_event(event): return "BLACKJACK"
             if self.btn_russian_roulette.handle_event(event): return "RUSSIANROULETTE"
+            if self.btn_slots.handle_event(event): return "SLOTS"
+            if self.btn_roulette.handle_event(event): return "ROULETTE"
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return "HUB"
         return None
@@ -43,7 +47,9 @@ class HubScene(Scene):
         self.btn_dating.update(m_pos)
         self.btn_blackjack.update(m_pos)
         self.btn_russian_roulette.update(m_pos)
-
+        self.btn_slots.update(m_pos)
+        self.btn_roulette.update(m_pos)
+        
     def draw(self, screen):
         from Utility.EconManager import EconomyManager
         
@@ -52,6 +58,8 @@ class HubScene(Scene):
         self.btn_dating.draw(screen)
         self.btn_blackjack.draw(screen)
         self.btn_russian_roulette.draw(screen)
+        self.btn_slots.draw(screen)
+        self.btn_roulette.draw(screen)
 
 
 class SceneManager:
@@ -94,9 +102,9 @@ class SceneManager:
                     # 4. Pass the FULL LIST of events to the scene's handler
                     # This fixes the 'not iterable' error
                     result = self.current_scene.handle_events(events)
-                    
                     # 5. Handle scene switching if the scene returns a name
                     if result:
+                        
                         self.switch_scene(result)
                     
                     # 6. Standard update and draw calls
